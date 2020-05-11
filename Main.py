@@ -13,7 +13,6 @@ is_training = False
 
 #oyundaki top asagidaki sinif ile kontrol edilmektedir.
 class Ball():
-
     def __init__(self,left,top,width,height,speed_x = 0,speed_y = 0,x = -1,y = -1):
         self.obj = pygame.Rect(left, top, width, height)
         self.speed_x = speed_x
@@ -23,6 +22,8 @@ class Ball():
         self.width = width
         self.height = height
         self.counter = 0
+        self.player_score = 0
+        self.opponent_score = 0
 
         if x != -1:
             self.obj.x = x
@@ -37,6 +38,10 @@ class Ball():
         if self.obj.top <= 0 or self.obj.bottom >= screen_height:
             self.speed_y *= -1
         if self.obj.left <= 0 or self.obj.right >= screen_width:
+            if self.obj.left <= 0:
+                self.player_score += 1
+            else:
+                self.opponent_score += 1
             self.restart()
 
         if self.obj.colliderect(player) or self.obj.left <= 20 and is_training: # ajan egitiliyorsa, ajanin karsisindaki oyuncu asla kaybetmez.
@@ -166,6 +171,8 @@ opponent_speed = 0
 alpha = 0.5
 decay_greedy = 0.9
 
+game_font = pygame.font.Font("freesansbold.ttf", 32)
+
 while True:
     if ball.counter >= 1000:
         is_training = False
@@ -251,6 +258,11 @@ while True:
     pygame.draw.rect(screen, light_grey, opponent)
     pygame.draw.ellipse(screen, light_grey, ball.get())
     pygame.draw.aaline(screen, light_grey, (screen_width/2,0), (screen_width/2, screen_height))
+
+    player_text = game_font.render(f"{ball.player_score}", False, light_grey)
+    screen.blit(player_text, (screen_width/2 + 25, screen_height/2))
+    opponent_text = game_font.render(f"{ball.opponent_score}", False, light_grey)
+    screen.blit(opponent_text, (screen_width/2 - 50, screen_height/2))
 
     pygame.display.flip()
     clock.tick(60)
