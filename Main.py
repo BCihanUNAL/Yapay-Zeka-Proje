@@ -194,62 +194,31 @@ while True:
     ball.animation()
     player_animation()
 
-    if is_training:
-        up_move = calculate(ball.obj.centerx, ball.obj.centery,opponent.left,opponent.bottom - speed_player,opponent.top - speed_player,alpha,decay_greedy,0,ball.speed_x,ball.speed_y)
-        down_move = calculate(ball.obj.centerx, ball.obj.centery, opponent.left, opponent.bottom + speed_player, opponent.top + speed_player, alpha, decay_greedy,0,ball.speed_x,ball.speed_y)
-        dir_x = 1
-        dir_y = 1
-        if ball.speed_x < 0:
-            dir_x = -1
-        if ball.speed_y < 0:
-            dir_y = -1
+    up_move = calculate(ball.obj.centerx, ball.obj.centery,opponent.left,opponent.bottom - speed_player,opponent.top - speed_player,alpha,decay_greedy,0,ball.speed_x,ball.speed_y)
+    down_move = calculate(ball.obj.centerx, ball.obj.centery, opponent.left, opponent.bottom + speed_player, opponent.top + speed_player, alpha, decay_greedy,0,ball.speed_x,ball.speed_y)
+    dir_x = 1
+    dir_y = 1
+    if ball.speed_x < 0:
+        dir_x = -1
+    if ball.speed_y < 0:
+        dir_y = -1
 
-        #belirlenen epsilon degeri kadar rastgele hareket edilmekte, bu sayede ajan etrafini kesfetmektedir.
-        if random.random() < epsilon:
-            if random.random() < 0.5:
-                opponent_speed = -speed_player
-                Q_values[(ball.obj.centerx, ball.obj.centery, opponent.centery - speed_player, dir_x, dir_y)] = up_move
-            else:
-                opponent_speed = speed_player
-                Q_values[(ball.obj.centerx, ball.obj.centery, opponent.centery + speed_player, dir_x, dir_y)] = down_move
-
-        else:
-            if up_move >= down_move:
-                opponent_speed = -speed_player
-                Q_values[(ball.obj.centerx, ball.obj.centery, opponent.centery - speed_player, dir_x, dir_y)] = up_move
-            else:
-                opponent_speed = speed_player
-                Q_values[(ball.obj.centerx, ball.obj.centery, opponent.centery + speed_player, dir_x, dir_y)] = down_move
-    else:
-        dir_x = 1
-        dir_y = 1
-        if ball.speed_x < 0:
-            dir_x = -1
-        if ball.speed_y < 0:
-            dir_y = -1
-        #Q fonksiyonunun degeri su anki state icin olusturulmamis ise hesaplanmaktadir
-        #ajanin yapabilecegi hareketlerden sonra olusan durumlar icin Q degerleri tekrar hesaplanmakta, sonrasinda hangi hareketin yapilacagini karsilastirmak icin kullanilmaktadir.
-        if Q_values.get((ball.obj.centerx, ball.obj.centery, opponent.centery - speed_player,dir_x, dir_y)) != None:
-            up_move = Q_values[(ball.obj.centerx, ball.obj.centery, opponent.centery - speed_player,dir_x, dir_y)]
-        else:
-            up_move = calculate(ball.obj.centerx, ball.obj.centery,opponent.left,opponent.bottom - speed_player,opponent.top - speed_player,alpha,decay_greedy,0,ball.speed_x,ball.speed_y)
+    #belirlenen epsilon degeri kadar rastgele hareket edilmekte, bu sayede ajan etrafini kesfetmektedir.
+    if random.random() < epsilon:
+        if random.random() < 0.5:
+            opponent_speed = -speed_player
             Q_values[(ball.obj.centerx, ball.obj.centery, opponent.centery - speed_player, dir_x, dir_y)] = up_move
-        if Q_values.get((ball.obj.centerx, ball.obj.centery, opponent.centery + speed_player,dir_x, dir_y)) != None:
-            down_move = Q_values[(ball.obj.centerx, ball.obj.centery, opponent.centery + speed_player,dir_x, dir_y)]
         else:
-            down_move = calculate(ball.obj.centerx, ball.obj.centery,opponent.left,opponent.bottom + speed_player,opponent.top + speed_player,alpha,decay_greedy,0,ball.speed_x,ball.speed_y)
+            opponent_speed = speed_player
+            Q_values[(ball.obj.centerx, ball.obj.centery, opponent.centery + speed_player, dir_x, dir_y)] = down_move
 
-        if random.random() < epsilon:
-            if random.random() < 0.5:
-                opponent_speed = -speed_player
-            else:
-                opponent_speed = speed_player
-
+    else:
+        if up_move >= down_move:
+            opponent_speed = -speed_player
+            Q_values[(ball.obj.centerx, ball.obj.centery, opponent.centery - speed_player, dir_x, dir_y)] = up_move
         else:
-            if up_move >= down_move:
-                opponent_speed = -speed_player
-            else:
-                opponent_speed = speed_player
+            opponent_speed = speed_player
+            Q_values[(ball.obj.centerx, ball.obj.centery, opponent.centery + speed_player, dir_x, dir_y)] = down_move
 
     opponent_animation()
 
