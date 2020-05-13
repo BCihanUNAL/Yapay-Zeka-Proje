@@ -49,8 +49,8 @@ class Ball():
 
         if self.obj.colliderect(opponent):
             self.speed_x = -abs(self.speed_x)
+            self.counter += 1
             if is_training:
-                self.counter += 1
                 if self.counter >= 1000: #ajani kac tur boyunca egitecegiz?
                     save_obj(Q_values,'Qmodel')
 
@@ -174,8 +174,9 @@ decay_greedy = 0.9
 game_font = pygame.font.Font("freesansbold.ttf", 32)
 
 while True:
-    if ball.counter >= 1000:
+    if ball.counter >= 1000 and is_training:
         is_training = False
+        print('basari orani = ', ball.counter/(ball.player_score+ball.counter))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
